@@ -1,6 +1,7 @@
 package com.example.task_mis.models;
 
 import com.example.task_mis.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 
@@ -33,9 +34,10 @@ public class Task {
     private TaskStatus status;
 
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    @JoinColumn(name="employee_id")
+    @JoinColumn(name="user_id")
     private User user;
 
 }
