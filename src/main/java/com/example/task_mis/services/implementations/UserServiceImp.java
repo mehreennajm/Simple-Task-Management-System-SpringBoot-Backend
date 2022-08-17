@@ -1,13 +1,16 @@
 package com.example.task_mis.services.implementations;
 import com.example.task_mis.dto.UserData;
+import com.example.task_mis.errors.CustomError;
 import com.example.task_mis.models.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -20,7 +23,7 @@ public class UserServiceImp implements UserService {
     @Override
     public List<UserData> getListOfUsers() {
         List <UserData> userDataList = new ArrayList<>();
-        List <User> users = userRepository.findAll();
+        List <User> users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
         for (User user: users) {
             userDataList.add(convertUserToDto(user));
         }
@@ -30,22 +33,42 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void addNewUser(User user) {
-
+        Optional<User> userOptional = userRepository.findUserByFirstName(user.getFirstName());
+        if(userOptional.isPresent()){
+            throw new IllegalStateException(CustomError.USER_NAME_ALREADY_EXIST);
+        }
+        userRepository.save(user);
     }
 
     @Override
-    public void updateUser(Long userId, User user) {
-
+    public User updateUser(Long userId, User userRequest) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setRole(userRequest.getRole());
+        this.userRepository.save(user);
+        return user;
     }
 
     @Override
     public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
+        userRepository.delete(user);
     }
 
     @Override
     public User getSpecificUserRecord(Long id) {
-        return null;
+        Optional < User > userOptional = userRepository.findById(id);
+        User newUser = null;
+        if (userOptional.isPresent()) {
+            newUser = userOptional.get();
+        } else {
+            throw new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR);
+        }
+        return newUser;
     }
 
     @Autowired

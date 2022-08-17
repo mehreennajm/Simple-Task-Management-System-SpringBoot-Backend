@@ -3,5 +3,5 @@ package com.example.task_mis.enums;
 public enum UserRole {
     admin,
     viewer,
-    project_manager
+    projectManager
 }
