@@ -7,6 +7,6 @@ public class UserData {
     private Long userId;
     private String firstName;
     private String lastName;
-    private String status;
+    private String role;
 
 }

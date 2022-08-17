@@ -1,5 +1,4 @@
 package com.example.task_mis.models;
-import com.example.task_mis.enums.TaskStatus;
 import com.example.task_mis.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -9,8 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+
 @Table(name = "users")
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
