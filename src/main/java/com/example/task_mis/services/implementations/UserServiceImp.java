@@ -7,6 +7,8 @@ import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +17,12 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     public UserServiceImp(UserRepository userRepository) {
+
         this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
@@ -37,6 +42,8 @@ public class UserServiceImp implements UserService {
         if(userOptional.isPresent()){
             throw new IllegalStateException(CustomError.USER_NAME_ALREADY_EXIST);
         }
+        String passwordEncode = this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(passwordEncode);
         userRepository.save(user);
     }
 
@@ -77,6 +84,8 @@ public class UserServiceImp implements UserService {
         UserData userDto = modelMapper.map(user, UserData.class);
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }
