@@ -8,12 +8,7 @@ import java.util.List;
 public interface TaskService {
     List<TaskData> getListOfTasks();
     void addNewTask(Task task);
-    Task updateTaskRecord(Long taskId, Task task);
     void deleteTask(Long taskId);
-    Task getSpecificRecord(Long taskId);
-    List<?> searchTask(String title);
-
     Task getSpecificTaskRecord(Long taskID);
-
     Task updateTask(Long id, Task taskRequest);
 }

@@ -1,10 +1,8 @@
 package com.example.task_mis.services.implementations;
 
 import com.example.task_mis.dto.TaskData;
-import com.example.task_mis.dto.UserData;
 import com.example.task_mis.errors.CustomError;
 import com.example.task_mis.models.Task;
-import com.example.task_mis.models.User;
 import com.example.task_mis.respositories.TaskRepository;
 import com.example.task_mis.services.interfaces.TaskService;
 import org.modelmapper.ModelMapper;
@@ -37,10 +35,6 @@ public class TaskServiceImp implements TaskService {
 
     @Override
     public void addNewTask(Task task) {
-        Optional<Task> taskOptional = taskRepository.findTaskById(task.getTaskId());
-        if(taskOptional.isPresent()){
-            throw new IllegalStateException(CustomError.USER_NAME_ALREADY_EXIST);
-        }
         taskRepository.save(task);
     }
 
@@ -50,37 +44,31 @@ public class TaskServiceImp implements TaskService {
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
         task.setTitle(taskRequest.getTitle());
         task.setCreateDate(taskRequest.getCreateDate());
-        task.setDescription(taskRequest.getDescription());
         task.setDueDate(taskRequest.getDueDate());
+        task.setDescription(taskRequest.getDescription());
+        task.setStatus(taskRequest.getStatus());
+        task.setUsers(taskRequest.getUsers());
         this.taskRepository.save(task);
         return task;
     }
 
     @Override
-    public Task updateTaskRecord(Long taskId, Task task) {
-        return null;
-        }
-
-    @Override
     public void deleteTask(Long taskId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-
-        taskRepository.delete(task);
-        
+        Task task = taskRepository.findById(taskId).orElseThrow(() ->
+                new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
+        this.taskRepository.delete(task);
     }
 
-
     @Override
-    public Task getSpecificTaskRecord(Long id) {
-        Optional < Task > taskOptional = taskRepository.findById(id);
-        Task newUser = null;
+    public Task getSpecificTaskRecord(Long taskId) {
+        Optional <Task> taskOptional = taskRepository.findById(taskId);
+        Task newTask = null;
         if (taskOptional.isPresent()) {
-            newUser = taskOptional.get();
+            newTask = taskOptional.get();
         } else {
             throw new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR);
         }
-        return new Task();
+        return newTask;
     }
 
     @Autowired
@@ -88,21 +76,15 @@ public class TaskServiceImp implements TaskService {
     private TaskData convertTaskToDto(Task task) {
         TaskData taskDto = modelMapper.map(task, TaskData.class);
         taskDto.setTaskId(task.getTaskId());
+        taskDto.setTitle(task.getTitle());
         taskDto.setCreateDate(task.getCreateDate());
-        taskDto.setDescription(task.getDescription().toString());
         taskDto.setDueDate(task.getDueDate());
+        taskDto.setStatus(task.getStatus());
+        taskDto.setUser(task.getUsers().getFirstName() + ' ' + task.getUsers().getLastName());
+        taskDto.setDescription(task.getDescription());
         return taskDto;
     }
     
 
-    @Override
-    public Task getSpecificRecord(Long taskId) {
-        return null;
-    }
 
-    @Override
-    public List<?> searchTask(String title) {
-        
-        return null;
-    }
 }

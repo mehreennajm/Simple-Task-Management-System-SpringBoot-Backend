@@ -15,7 +15,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
-          <factory-entry name="simple-task-app-" />
+          <factory-entry name="simple-task-app-" value="3b2f0f88-37a8-489f-8810-254f6a83febf" />
         </datasource-mapping>
         <naming-strategy-map />
       </configuration>

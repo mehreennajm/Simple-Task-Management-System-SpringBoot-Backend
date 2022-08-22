@@ -1,6 +1,7 @@
 package com.example.task_mis.models;
 import com.example.task_mis.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
