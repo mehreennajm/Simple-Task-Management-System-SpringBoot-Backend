@@ -43,6 +43,7 @@ public class UserServiceImp implements UserService {
             throw new IllegalStateException(CustomError.USER_NAME_ALREADY_EXIST);
         }
         String passwordEncode = this.passwordEncoder.encode(user.getPassword());
+        user.setRole(user.getRole());
         user.setPassword(passwordEncode);
         userRepository.save(user);
     }

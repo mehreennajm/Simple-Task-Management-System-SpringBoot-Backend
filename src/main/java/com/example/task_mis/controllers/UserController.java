@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 
-@CrossOrigin
+@CrossOrigin (origins = "http://localhost:4200/")
 @RestController
 @RequestMapping(path = "api/users")
 public class UserController {
@@ -52,7 +52,7 @@ public class UserController {
         return user;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public void deletePost(@PathVariable(name = "id") Long userId) {
         userService.deleteUser(userId);
     }

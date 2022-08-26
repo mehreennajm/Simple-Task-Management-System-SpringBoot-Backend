@@ -1,5 +1,4 @@
 package com.example.task_mis.services.implementations;
-
 import com.example.task_mis.dto.TaskData;
 import com.example.task_mis.errors.CustomError;
 import com.example.task_mis.models.Task;
@@ -9,7 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +21,7 @@ public class TaskServiceImp implements TaskService {
     }
 
 
+
     @Override
     public List<TaskData> getListOfTasks() {
         List <TaskData> taskDataList = new ArrayList<>();
@@ -31,37 +30,12 @@ public class TaskServiceImp implements TaskService {
             taskDataList.add(convertTaskToDto(task));
         }
         return taskDataList;
-    }
 
-    @Override
-    public void addNewTask(Task task) {
-        taskRepository.save(task);
-    }
-
-    @Override
-    public Task updateTask(Long taskId, Task taskRequest) {
-        Task task = taskRepository.findById(taskId).orElseThrow(() ->
-                new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-        task.setTitle(taskRequest.getTitle());
-        task.setCreateDate(taskRequest.getCreateDate());
-        task.setDueDate(taskRequest.getDueDate());
-        task.setDescription(taskRequest.getDescription());
-        task.setStatus(taskRequest.getStatus());
-        task.setUsers(taskRequest.getUsers());
-        this.taskRepository.save(task);
-        return task;
-    }
-
-    @Override
-    public void deleteTask(Long taskId) {
-        Task task = taskRepository.findById(taskId).orElseThrow(() ->
-                new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-        this.taskRepository.delete(task);
     }
 
     @Override
     public Task getSpecificTaskRecord(Long taskId) {
-        Optional <Task> taskOptional = taskRepository.findById(taskId);
+        Optional < Task > taskOptional = taskRepository.findById(taskId);
         Task newTask = null;
         if (taskOptional.isPresent()) {
             newTask = taskOptional.get();
@@ -71,17 +45,36 @@ public class TaskServiceImp implements TaskService {
         return newTask;
     }
 
+    @Override
+    public void addNewTask(Task task) {
+        taskRepository.save(task);
+    }
+
+    @Override
+    public void updateTask(Long taskId, Task task) {
+        Task newTask = taskRepository.findById(taskId).orElseThrow(() ->
+                new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
+        newTask.setUserr(task.getUserr());
+        taskRepository.save(task);
+    }
+
+    @Override
+    public void deleteTask(Long taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() ->
+                new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
+        this.taskRepository.delete(task);
+    }
+
     @Autowired
     private ModelMapper modelMapper;
     private TaskData convertTaskToDto(Task task) {
         TaskData taskDto = modelMapper.map(task, TaskData.class);
-        taskDto.setTaskId(task.getTaskId());
         taskDto.setTitle(task.getTitle());
+        taskDto.setDescription(task.getDescription());
+        taskDto.setStatus(task.getStatus());
         taskDto.setCreateDate(task.getCreateDate());
         taskDto.setDueDate(task.getDueDate());
-        taskDto.setStatus(task.getStatus());
-        taskDto.setUser(task.getUsers().getFirstName() + ' ' + task.getUsers().getLastName());
-        taskDto.setDescription(task.getDescription());
+        taskDto.setUserr(task.getUserr().getFirstName() + ' ' + task.getUserr().getLastName());
         return taskDto;
     }
     

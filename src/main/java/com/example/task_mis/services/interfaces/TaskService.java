@@ -10,5 +10,5 @@ public interface TaskService {
     void addNewTask(Task task);
     void deleteTask(Long taskId);
     Task getSpecificTaskRecord(Long taskID);
-    Task updateTask(Long id, Task taskRequest);
+    void updateTask(Long id, Task taskRequest);
 }

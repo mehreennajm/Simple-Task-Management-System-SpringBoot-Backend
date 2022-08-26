@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin (origins = "http://localhost:4200/")
 @RestController
 @RequestMapping(path = "api/tasks")
 public class TaskController {
@@ -28,18 +28,13 @@ public class TaskController {
     @PostMapping(path = "/add-task")
     public void addNewTask(@RequestBody Task task){taskService.addNewTask(task);}
 
-    //update task record
+    // update Project record
     @Transactional
-    @PutMapping("/{id}/edit")
-    public ResponseEntity<TaskData> updateTaskRecord(@PathVariable Long id, @RequestBody TaskData taskData) {
-
-        //convert DTO to Entity
-        Task taskRequest = modelMapper.map(taskData, Task.class);
-        Task newTask = taskService.updateTask(id, taskRequest);
-
-        // entity to DTO
-        TaskData taskResponse = modelMapper.map(newTask, TaskData.class);
-        return ResponseEntity.ok().body(taskResponse);
+    @PutMapping(path ="/{id}/edit")
+    public Task updateTaskRecord(@PathVariable("id") Long taskId ,
+                                 @RequestBody Task task){
+        taskService.updateTask(taskId,task);
+        return task;
     }
 
     //getting a specific Task  via id

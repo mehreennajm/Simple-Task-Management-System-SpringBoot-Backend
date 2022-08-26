@@ -1,17 +1,17 @@
 package com.example.task_mis.models;
 import com.example.task_mis.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
 
 
-@Table(name = "users")
 @Entity
+@Table(name = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,7 +36,9 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+
     @JsonIgnore
-    @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userr",cascade = CascadeType.ALL)
     private List<Task> tasks;
+
 }

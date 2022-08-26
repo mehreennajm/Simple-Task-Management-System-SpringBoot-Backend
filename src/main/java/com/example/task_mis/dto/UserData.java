@@ -2,6 +2,7 @@ package com.example.task_mis.dto;
 
 import lombok.Data;
 
+
 @Data
 public class UserData {
     private Long userId;

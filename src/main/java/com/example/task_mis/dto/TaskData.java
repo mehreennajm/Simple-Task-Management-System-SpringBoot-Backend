@@ -1,9 +1,6 @@
 package com.example.task_mis.dto;
-
 import com.example.task_mis.enums.TaskStatus;
-import com.example.task_mis.models.User;
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Data
@@ -14,6 +11,6 @@ public class TaskData {
     private LocalDate createDate;
     private LocalDate dueDate;
     private TaskStatus status;
-    private String user;
+    private String userr;
 
 }
