@@ -20,8 +20,6 @@ public class TaskServiceImp implements TaskService {
         this.taskRepository = taskRepository;
     }
 
-
-
     @Override
     public List<TaskData> getListOfTasks() {
         List <TaskData> taskDataList = new ArrayList<>();

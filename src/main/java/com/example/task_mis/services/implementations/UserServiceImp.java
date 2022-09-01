@@ -7,7 +7,6 @@ import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -17,12 +16,11 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImp(UserRepository userRepository) {
-
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -38,7 +36,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void addNewUser(User user) {
-        Optional<User> userOptional = userRepository.findUserByFirstName(user.getFirstName());
+        Optional userOptional = userRepository.findUserByFirstName(user.getUsername());
         if(userOptional.isPresent()){
             throw new IllegalStateException(CustomError.USER_NAME_ALREADY_EXIST);
         }

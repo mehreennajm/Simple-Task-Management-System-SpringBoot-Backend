@@ -18,6 +18,11 @@ import java.time.LocalDate;
 
 public class Task {
 
+    public Task(Long taskId, User userr) {
+        this.taskId = taskId;
+        this.userr = userr;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
