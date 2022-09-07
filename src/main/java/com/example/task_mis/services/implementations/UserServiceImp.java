@@ -1,7 +1,7 @@
 package com.example.task_mis.services.implementations;
 import com.example.task_mis.dto.UserData;
 import com.example.task_mis.errors.CustomError;
-import com.example.task_mis.models.User;
+import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;

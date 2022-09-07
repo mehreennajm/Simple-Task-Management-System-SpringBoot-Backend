@@ -1,18 +1,18 @@
-package com.example.task_mis.models;
+package com.example.task_mis.entities;
 import com.example.task_mis.enums.UserRole;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
 
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username")
+        })
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

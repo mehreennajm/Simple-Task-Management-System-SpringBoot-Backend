@@ -1,6 +1,6 @@
 package com.example.task_mis.services.interfaces;
 import com.example.task_mis.dto.TaskData;
-import com.example.task_mis.models.Task;
+import com.example.task_mis.entities.Task;
 
 
 import java.util.List;

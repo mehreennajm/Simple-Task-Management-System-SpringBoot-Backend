@@ -1,6 +1,6 @@
 package com.example.task_mis.services.interfaces;
 import com.example.task_mis.dto.UserData;
-import com.example.task_mis.models.User;
+import com.example.task_mis.entities.User;
 import java.util.List;
 
 public interface UserService {

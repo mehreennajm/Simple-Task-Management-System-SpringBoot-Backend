@@ -1,10 +1,8 @@
-package com.example.task_mis.models;
+package com.example.task_mis.entities;
 
 import com.example.task_mis.enums.TaskStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 import java.time.LocalDate;
