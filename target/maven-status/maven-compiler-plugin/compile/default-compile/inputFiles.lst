@@ -1,0 +1,15 @@
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/services/interfaces/TaskService.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/models/User.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/TaskMisApplication.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/controllers/TaskController.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/dto/UserData.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/respositories/UserRepository.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/controllers/UserController.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/respositories/TaskRepository.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/services/interfaces/UserService.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/services/implementations/UserServiceImp.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/dto/TaskData.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/services/implementations/TaskServiceImp.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/enums/TaskStatus.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/models/Task.java
+/Users/mehreennajm/IdeaProjects/simple-task-app-/src/main/java/com/example/task_mis/enums/UserRole.java
