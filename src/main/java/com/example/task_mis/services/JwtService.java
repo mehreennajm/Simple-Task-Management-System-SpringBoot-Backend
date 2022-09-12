@@ -4,6 +4,7 @@ import com.example.task_mis.entities.JwtResponse;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.util.JwtUtil;
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -63,10 +64,9 @@ public class JwtService implements UserDetailsService {
     private void authenticate(String userName, String userPassword) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new Exception("Invalid username or password ", e);
         }
+
     }
 }

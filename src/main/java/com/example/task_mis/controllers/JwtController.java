@@ -4,19 +4,17 @@ import com.example.task_mis.entities.JwtRequest;
 import com.example.task_mis.entities.JwtResponse;
 import com.example.task_mis.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
+@RequestMapping(path = "api/")
 public class JwtController {
 
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping({"/authenticate"})
+    @PostMapping({"authenticate"})
     public JwtResponse createJwtToken(@RequestBody JwtRequest jwtRequest) throws Exception {
         return jwtService.createJwtToken(jwtRequest);
     }
