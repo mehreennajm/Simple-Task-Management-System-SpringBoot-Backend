@@ -1,11 +1,11 @@
 package com.example.task_mis.entities;
 
-public class AuthRequest {
+public class JwtRequest {
 
     private String username;
     private String password;
 
-    public String getUsername() {
+    public String getUserName() {
         return username;
     }
 
@@ -13,7 +13,7 @@ public class AuthRequest {
         this.username = userName;
     }
 
-    public String getPassword() {
+    public String getUserPassword() {
         return password;
     }
 
