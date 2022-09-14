@@ -33,14 +33,14 @@ public class JwtService implements UserDetailsService {
     private AuthenticationManager authenticationManager;
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
-        String userName = jwtRequest.getUserName();
-        String userPassword = jwtRequest.getUserPassword();
-        authenticate(userName, userPassword);
+        String username = jwtRequest.getUsername();
+        String userPassword = jwtRequest.getPassword();
+        authenticate(username, userPassword);
 
-        UserDetails userDetails = loadUserByUsername(userName);
+        UserDetails userDetails = loadUserByUsername(username);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
-        User user = userRepository.findUserByUsername(userName);
+        User user = userRepository.findUserByUsername(username);
         return new JwtResponse(user, newGeneratedToken);
     }
 
@@ -61,9 +61,9 @@ public class JwtService implements UserDetailsService {
     }
 
 
-    private void authenticate(String userName, String userPassword) throws Exception {
+    private void authenticate(String username, String password) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException e) {
             throw new Exception("Invalid username or password ", e);
         }

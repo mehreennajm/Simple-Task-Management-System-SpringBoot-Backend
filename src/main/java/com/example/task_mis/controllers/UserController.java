@@ -26,11 +26,13 @@ public class UserController {
     private  UserService userService;
     //list all of Users
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserData> getListOfUsers(){return userService.getListOfUsers();}
 
 
 
     @PostMapping(path = "/add-user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void addNewUser(@RequestBody User user){
         userService.addNewUser(user);
     }
@@ -38,6 +40,7 @@ public class UserController {
     // update User record
     @Transactional
     @PutMapping("/{id}/edit")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserData> updateUserRecord(@PathVariable Long id, @RequestBody UserData userData) {
 
         // convert DTO to Entity
@@ -51,12 +54,14 @@ public class UserController {
 
     //getting a specific User via id
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public User getSpecificRecord(@PathVariable(value = "id") Long userId){
         User user = userService.getSpecificUserRecord(userId);
         return user;
     }
 
     @DeleteMapping("/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deletePost(@PathVariable(name = "id") Long userId) {
         userService.deleteUser(userId);
     }

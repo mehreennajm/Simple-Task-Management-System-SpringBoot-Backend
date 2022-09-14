@@ -1,5 +1,7 @@
 package com.example.task_mis.entities;
 
+
+
 public class JwtResponse {
 
     private User user;
