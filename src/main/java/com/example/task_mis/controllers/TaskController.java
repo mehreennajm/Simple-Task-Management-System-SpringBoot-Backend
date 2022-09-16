@@ -12,9 +12,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @SpringBootApplication
-@CrossOrigin (origins = "http://localhost:4200/")
+@CrossOrigin (origins = "*")
 @RestController
-@RequestMapping(path = "api/tasks")
+@RequestMapping({"api"})
 public class TaskController {
 
     @Autowired
@@ -24,18 +24,18 @@ public class TaskController {
     private  TaskService taskService;
 
     //list all of tasks
-    @GetMapping
+    @GetMapping({"/tasks"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public List<TaskData> getListOfTasks(){return taskService.getListOfTasks();}
 
 
-    @PostMapping(path = "/add-task")
+    @PostMapping({"/tasks/add-task"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public void addNewTask(@RequestBody Task task){taskService.addNewTask(task);}
 
     // update Project record
     @Transactional
-    @PutMapping(path ="/{id}/edit")
+    @PutMapping({"/tasks/{id}/edit"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public Task updateTaskRecord(@PathVariable("id") Long taskId ,
                                  @RequestBody Task task){
@@ -44,7 +44,7 @@ public class TaskController {
     }
 
     //getting a specific Task  via id
-    @GetMapping("/{id}")
+    @GetMapping({"/tasks/{id}"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public Task getSpecificRecord(@PathVariable(value = "id") Long taskId){
         Task task = taskService.getSpecificTaskRecord(taskId);
@@ -52,7 +52,7 @@ public class TaskController {
     }
 
     //delete task record
-    @DeleteMapping(path = "/{id}/delete")
+    @DeleteMapping({ "/tasks/{id}/delete"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public void deleteTask(@PathVariable("id") Long taskId){
         taskService.deleteTask(taskId);
