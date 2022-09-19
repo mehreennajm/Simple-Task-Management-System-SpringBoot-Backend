@@ -24,11 +24,15 @@ public class UserController {
 
     @Autowired
     private  UserService userService;
+
     //list all of Users
     @GetMapping({"/users"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserData> getListOfUsers(){return userService.getListOfUsers();}
 
+    @GetMapping({"/users/managers"})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<UserData> getListOfManagers(){return userService.getListOfManagers();}
 
 
     @PostMapping({"/users/add-user"})
