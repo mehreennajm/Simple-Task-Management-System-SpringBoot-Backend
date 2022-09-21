@@ -12,14 +12,10 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @SpringBootApplication
-@CrossOrigin (origins = "*")
+@CrossOrigin (origins = "http://localhost:4200/")
 @RestController
 @RequestMapping({"api"})
 public class TaskController {
-
-    @Autowired
-    private ModelMapper modelMapper;
-
     @Autowired
     private  TaskService taskService;
 

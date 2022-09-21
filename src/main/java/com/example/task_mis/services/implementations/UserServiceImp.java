@@ -35,9 +35,9 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<UserData> getListOfManagers() {
+    public List<UserData> getListOfOrdinaryUsers() {
         List <UserData> managerDataList = new ArrayList<>();
-        List <User> users = userRepository.findAllManagers();
+        List <User> users = userRepository.findAllUsers();
         for (User user: users) {
             managerDataList.add(convertUserToDto(user));
         }
