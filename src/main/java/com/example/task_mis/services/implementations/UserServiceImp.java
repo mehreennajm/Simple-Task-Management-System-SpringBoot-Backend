@@ -64,6 +64,7 @@ public class UserServiceImp implements UserService {
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setRole(userRequest.getRole());
+        user.setUsername(userRequest.getUsername());
         this.userRepository.save(user);
         return user;
     }
