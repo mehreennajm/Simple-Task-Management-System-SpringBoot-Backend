@@ -31,7 +31,7 @@ public class UserController {
     public List<UserData> getListOfUsers(){return userService.getListOfUsers();}
 
     @GetMapping({"/users/managers"})
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public List<UserData> getListOfOrdinaryUsers(){return userService.getListOfOrdinaryUsers();}
 
 

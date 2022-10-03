@@ -7,6 +7,8 @@ import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -47,9 +49,9 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void addNewUser(User user) {
-        Optional userOptional = userRepository.findUserByFirstName(user.getUsername());
+        Optional userOptional = userRepository.findUserByFirstName(user.getEmail());
         if(userOptional.isPresent()){
-            throw new IllegalStateException(CustomError.USER_NAME_ALREADY_EXIST);
+            throw new IllegalStateException(CustomError.EMAIL_ALREADY_EXIST);
         }
         String passwordEncode = this.passwordEncoder.encode(user.getPassword());
         user.setRole(user.getRole());
@@ -64,7 +66,7 @@ public class UserServiceImp implements UserService {
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setRole(userRequest.getRole());
-        user.setUsername(userRequest.getUsername());
+        user.setEmail(userRequest.getEmail());
         this.userRepository.save(user);
         return user;
     }
@@ -95,9 +97,36 @@ public class UserServiceImp implements UserService {
         UserData userDto = modelMapper.map(user, UserData.class);
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
-        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }
+
+
+
+    public void updateResetPasswordToken(String token, String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setResetPasswordToken(token);
+            userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException("Could not find any user with the email " + email);
+        }
+    }
+
+    public User getByResetPasswordToken(String token) {
+        return userRepository.findByResetPasswordToken(token);
+    }
+
+    public void updatePassword(User customer, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        customer.setPassword(encodedPassword);
+        customer.setResetPasswordToken(null);
+        userRepository.save(customer);
+    }
+
+
+
 }

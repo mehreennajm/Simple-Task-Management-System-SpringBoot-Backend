@@ -10,4 +10,9 @@ public interface UserService {
     User updateUser(Long userId, User userRequest);
     void deleteUser(Long userId);
     User getSpecificUserRecord(Long id);
+    void updateResetPasswordToken(String token, String email);
+    User getByResetPasswordToken(String token);
+    void updatePassword(User customer, String newPassword);
+
+
 }

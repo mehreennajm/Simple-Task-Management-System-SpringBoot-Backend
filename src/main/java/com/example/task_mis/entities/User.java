@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username")
+        @UniqueConstraint(columnNames = "email")
         })
 @Data
 @AllArgsConstructor
@@ -38,8 +38,8 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "password")
     private String password;
@@ -48,6 +48,9 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 
     @JsonIgnore
     @OneToMany(mappedBy = "userr",cascade = CascadeType.ALL)
