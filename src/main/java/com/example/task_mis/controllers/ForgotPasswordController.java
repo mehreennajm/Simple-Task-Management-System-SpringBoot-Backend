@@ -1,11 +1,11 @@
 package com.example.task_mis.controllers;
-
 import com.example.task_mis.dto.Utility;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,9 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 
 
-@CrossOrigin(origins = "http://localhost:4200/")
 @RestController
-@RequestMapping({"api"})
+@RequestMapping("api")
 public class ForgotPasswordController {
     @Autowired
     private JavaMailSender mailSender;
@@ -51,7 +50,7 @@ public class ForgotPasswordController {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        helper.setFrom("info@mehreennajm.me", "Customer Support");
+        helper.setFrom("mehreen.najm@gmail.com", "Customer Support");
         helper.setTo(recipientEmail);
 
         String subject = "Here's the link to reset your password";
@@ -72,16 +71,15 @@ public class ForgotPasswordController {
         mailSender.send(message);
     }
 
-    @GetMapping("/reset_password")
+
+    @GetMapping({"/reset_password",})
     public User showResetPasswordForm(@Param(value = "token") String token) {
         User user = userService.getByResetPasswordToken(token);
-        if (user == null) {
-           throw new IllegalStateException("Invalid Token");
-        }
-        return user ;
+        user.setResetPasswordToken(token);
+        return user;
     }
 
-    @PostMapping("/reset_password")
+    @PostMapping({ "/reset_password"})
     public void processResetPassword(HttpServletRequest request) {
         String token = request.getParameter("token");
         String password = request.getParameter("password");
@@ -92,8 +90,6 @@ public class ForgotPasswordController {
            throw new IllegalStateException("User not found");
         } else {
             userService.updatePassword(user, password);
-
-
 
         }
 
