@@ -27,8 +27,8 @@ public class ForgotPasswordController {
 
 
     @PostMapping("/forgot_password")
-    public void processForgotPassword(HttpServletRequest request) {
-        String email = request.getParameter("email");
+    public void processForgotPassword(HttpServletRequest request,@RequestBody  User user) {
+        String email = user.getEmail();
         String token = RandomString.make(30);
 
         try {
