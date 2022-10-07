@@ -119,12 +119,12 @@ public class UserServiceImp implements UserService {
         return userRepository.findByResetPasswordToken(token);
     }
 
-    public void updatePassword(User customer, String newPassword) {
+    public void updatePassword(User user, String newPassword) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(newPassword);
-        customer.setPassword(encodedPassword);
-        customer.setResetPasswordToken(null);
-        userRepository.save(customer);
+        user.setPassword(encodedPassword);
+        user.setResetPasswordToken(null);
+        userRepository.save(user);
     }
 
 

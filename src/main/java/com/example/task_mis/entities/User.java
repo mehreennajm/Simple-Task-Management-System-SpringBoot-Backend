@@ -28,6 +28,11 @@ public class User {
         this.lastName = lastName;
     }
 
+    public User(String password) {
+        this.password = password;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;

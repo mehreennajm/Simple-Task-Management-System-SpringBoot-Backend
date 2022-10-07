@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 
 
@@ -79,19 +80,16 @@ public class ForgotPasswordController {
         return user;
     }
 
-    @PostMapping({ "/reset_password"})
-    public void processResetPassword(HttpServletRequest request) {
+
+    @Transactional
+    @PutMapping ({ "/reset_password"})
+    public void processResetPassword(HttpServletRequest request,@RequestBody User u ) {
         String token = request.getParameter("token");
-        String password = request.getParameter("password");
-
+        String password = u.getPassword();
         User user = userService.getByResetPasswordToken(token);
-
-        if (user == null) {
-           throw new IllegalStateException("User not found");
-        } else {
             userService.updatePassword(user, password);
 
-        }
+
 
     }
 
