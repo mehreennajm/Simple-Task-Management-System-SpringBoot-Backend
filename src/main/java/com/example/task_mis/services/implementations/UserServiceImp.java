@@ -37,9 +37,9 @@ public class UserServiceImp implements UserService {
     LocalDateTime localDateTime = LocalDateTime.now();
 
     @Override
-    public List<UserData> getListOfUsers() {
-        List <UserData> userDataList = new ArrayList<>();
-        List <User> users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
+    public List < UserData > getListOfUsers() {
+        List < UserData > userDataList = new ArrayList < > ();
+        List < User > users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
         for (User user: users) {
             userDataList.add(convertUserToDto(user));
         }
@@ -48,19 +48,17 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<UserData> getListOfOrdinaryUsers() {
-        List <UserData> managerDataList = new ArrayList<>();
-        List <User> users = userRepository.findAllUsers();
+    public List < UserData > getListOfOrdinaryUsers() {
+        List < UserData > managerDataList = new ArrayList < > ();
+        List < User > users = userRepository.findAllUsers();
         for (User user: users) {
             managerDataList.add(convertUserToDto(user));
         }
         return managerDataList;
     }
 
-
     @Override
-    public void addNewUser(MultipartFile profilePhoto, String firstName, String lastName, String email, String password
-                            , UserRole userRole) throws IOException {
+    public void addNewUser(MultipartFile profilePhoto, String firstName, String lastName, String email, String password, UserRole userRole) throws IOException {
 
         User user = new User();
         user.setFirstName(firstName);
@@ -74,12 +72,11 @@ public class UserServiceImp implements UserService {
 
         user.setRole(userRole);
 
-        String fileName = localDateTime+StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+        String fileName = localDateTime + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
         user.setProfilePhoto(fileName);
 
         String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
-        Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR+ File.separator+fileName), StandardCopyOption.REPLACE_EXISTING);
-
+        Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
 
         userRepository.save(user);
     }
@@ -95,58 +92,44 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
-
         Path imagesPath = Paths.get(
                 "/Users/mehreennajm/Desktop/profiles/" +
                         user.getProfilePhoto());
 
+        if (Files.exists(imagesPath)) {
+            Files.delete(imagesPath);
+            String fileName = localDateTime + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+            user.setProfilePhoto(fileName);
 
+            String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
+            Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
 
+            user.setFirstName(firstName);
 
+            user.setLastName(lastName);
 
-            if(Files.exists(imagesPath)){
-                Files.delete(imagesPath);
-                String fileName = localDateTime+StringUtils.cleanPath(profilePhoto.getOriginalFilename());
-                user.setProfilePhoto(fileName);
+            user.setEmail(email);
 
-                String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
-                Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR+ File.separator+fileName), StandardCopyOption.REPLACE_EXISTING);
+            String passwordEncode = this.passwordEncoder.encode(password);
+            user.setPassword(passwordEncode);
 
-                user.setFirstName(firstName);
+        } else {
 
-                user.setLastName(lastName);
+            user.setFirstName(firstName);
 
-                user.setEmail(email);
+            user.setLastName(lastName);
 
-                String passwordEncode = this.passwordEncoder.encode(password);
-                user.setPassword(passwordEncode);
+            user.setEmail(email);
 
-                user.setRole(userRole);
+            String passwordEncode = this.passwordEncoder.encode(password);
+            user.setPassword(passwordEncode);
 
-
-                userRepository.save(user);
-
-            }
-            else {
-
-                user.setFirstName(firstName);
-
-                user.setLastName(lastName);
-
-                user.setEmail(email);
-
-                String passwordEncode = this.passwordEncoder.encode(password);
-                user.setPassword(passwordEncode);
-
-                user.setRole(userRole);
-
-
-                userRepository.save(user);
-            }
-            System.out.println("File "
-                    + imagesPath.toAbsolutePath().toString()
-                    + " successfully removed");
-
+        }
+        user.setRole(userRole);
+        userRepository.save(user);
+        System.out.println("File " +
+                imagesPath.toAbsolutePath().toString() +
+                " successfully removed");
 
         return user;
     }
@@ -161,13 +144,13 @@ public class UserServiceImp implements UserService {
 
         try {
             Files.delete(imagesPath);
-            System.out.println("File "
-                    + imagesPath.toAbsolutePath().toString()
-                    + " successfully removed");
+            System.out.println("File " +
+                    imagesPath.toAbsolutePath().toString() +
+                    " successfully removed");
         } catch (IOException e) {
-            System.err.println("Unable to delete "
-                    + imagesPath.toAbsolutePath().toString()
-                    + " due to...");
+            System.err.println("Unable to delete " +
+                    imagesPath.toAbsolutePath().toString() +
+                    " due to...");
             e.printStackTrace();
         }
 
@@ -199,8 +182,6 @@ public class UserServiceImp implements UserService {
         return userDto;
     }
 
-
-
     public void updateResetPasswordToken(String token, String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user != null) {
@@ -222,7 +203,5 @@ public class UserServiceImp implements UserService {
         user.setResetPasswordToken(null);
         userRepository.save(user);
     }
-
-
 
 }
