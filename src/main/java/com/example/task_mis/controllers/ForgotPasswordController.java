@@ -5,7 +5,6 @@ import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -82,12 +81,12 @@ public class ForgotPasswordController {
 
 
     @Transactional
-    @PutMapping ({ "/reset_password"})
-    public void processResetPassword(HttpServletRequest request,@RequestBody User u ) {
+    @PostMapping ({ "/reset_password"})
+    public void processResetPassword(HttpServletRequest request,@RequestBody User user ) {
         String token = request.getParameter("token");
-        String password = u.getPassword();
-        User user = userService.getByResetPasswordToken(token);
-            userService.updatePassword(user, password);
+        String password = user.getPassword();
+        User userServiceByResetPasswordToken = userService.getByResetPasswordToken(token);
+            userService.updatePassword(userServiceByResetPasswordToken, password);
 
 
 

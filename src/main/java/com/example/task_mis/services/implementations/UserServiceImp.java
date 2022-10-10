@@ -1,5 +1,6 @@
 package com.example.task_mis.services.implementations;
 import com.example.task_mis.dto.UserData;
+import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.errors.CustomError;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
@@ -11,9 +12,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -24,6 +34,7 @@ public class UserServiceImp implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    LocalDateTime localDateTime = LocalDateTime.now();
 
     @Override
     public List<UserData> getListOfUsers() {
@@ -48,26 +59,95 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public void addNewUser(User user) {
-        Optional userOptional = userRepository.findUserByFirstName(user.getEmail());
-        if(userOptional.isPresent()){
-            throw new IllegalStateException(CustomError.EMAIL_ALREADY_EXIST);
-        }
-        String passwordEncode = this.passwordEncoder.encode(user.getPassword());
-        user.setRole(user.getRole());
+    public void addNewUser(MultipartFile profilePhoto, String firstName, String lastName, String email, String password
+                            , UserRole userRole) throws IOException {
+
+        User user = new User();
+        user.setFirstName(firstName);
+
+        user.setLastName(lastName);
+
+        user.setEmail(email);
+
+        String passwordEncode = this.passwordEncoder.encode(password);
         user.setPassword(passwordEncode);
+
+        user.setRole(userRole);
+
+        String fileName = localDateTime+StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+        user.setProfilePhoto(fileName);
+
+        String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
+        Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR+ File.separator+fileName), StandardCopyOption.REPLACE_EXISTING);
+
+
         userRepository.save(user);
     }
 
     @Override
-    public User updateUser(Long userId, User userRequest) {
+    public User updateUser(Long userId,
+                           MultipartFile profilePhoto,
+                           String firstName,
+                           String lastName,
+                           String email,
+                           String password,
+                           UserRole userRole) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
-        user.setRole(userRequest.getRole());
-        user.setEmail(userRequest.getEmail());
-        this.userRepository.save(user);
+
+
+        Path imagesPath = Paths.get(
+                "/Users/mehreennajm/Desktop/profiles/" +
+                        user.getProfilePhoto());
+
+
+
+
+
+            if(Files.exists(imagesPath)){
+                Files.delete(imagesPath);
+                String fileName = localDateTime+StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+                user.setProfilePhoto(fileName);
+
+                String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
+                Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR+ File.separator+fileName), StandardCopyOption.REPLACE_EXISTING);
+
+                user.setFirstName(firstName);
+
+                user.setLastName(lastName);
+
+                user.setEmail(email);
+
+                String passwordEncode = this.passwordEncoder.encode(password);
+                user.setPassword(passwordEncode);
+
+                user.setRole(userRole);
+
+
+                userRepository.save(user);
+
+            }
+            else {
+
+                user.setFirstName(firstName);
+
+                user.setLastName(lastName);
+
+                user.setEmail(email);
+
+                String passwordEncode = this.passwordEncoder.encode(password);
+                user.setPassword(passwordEncode);
+
+                user.setRole(userRole);
+
+
+                userRepository.save(user);
+            }
+            System.out.println("File "
+                    + imagesPath.toAbsolutePath().toString()
+                    + " successfully removed");
+
+
         return user;
     }
 
@@ -75,6 +155,21 @@ public class UserServiceImp implements UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
+        Path imagesPath = Paths.get(
+                "/Users/mehreennajm/Desktop/profiles/" +
+                        user.getProfilePhoto());
+
+        try {
+            Files.delete(imagesPath);
+            System.out.println("File "
+                    + imagesPath.toAbsolutePath().toString()
+                    + " successfully removed");
+        } catch (IOException e) {
+            System.err.println("Unable to delete "
+                    + imagesPath.toAbsolutePath().toString()
+                    + " due to...");
+            e.printStackTrace();
+        }
 
         userRepository.delete(user);
     }
@@ -99,6 +194,7 @@ public class UserServiceImp implements UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
+        userDto.setProfilePhoto(user.getProfilePhoto());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }

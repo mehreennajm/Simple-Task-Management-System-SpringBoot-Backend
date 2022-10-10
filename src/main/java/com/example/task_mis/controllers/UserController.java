@@ -1,14 +1,20 @@
 package com.example.task_mis.controllers;
 import com.example.task_mis.dto.UserData;
 import com.example.task_mis.entities.User;
+import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -37,22 +43,34 @@ public class UserController {
 
     @PostMapping({"/users/add-user"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void addNewUser(@RequestBody User user){
-        userService.addNewUser(user);
+    public ResponseEntity<User> addNewUser(@RequestParam("profilePhoto") MultipartFile profilePhoto,
+                                           @RequestParam("firstName") String firstName,
+                                           @RequestParam("lastName") String lastName,
+                                           @RequestParam("email") String email,
+                                           @RequestParam("password") String password,
+                                           @RequestParam("userRole") UserRole userRole) throws IOException {
+
+        userService.addNewUser(profilePhoto,firstName,lastName,email,password,userRole);
+
+        return ResponseEntity.ok().build();
     }
 
     // update User record
     @Transactional
     @PutMapping({"/users/{id}/edit"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UserData> updateUserRecord(@PathVariable Long id, @RequestBody UserData userData) {
+    public ResponseEntity<User> updateUserRecord(@PathVariable Long id,
+                                                     @RequestParam("profilePhoto") MultipartFile profilePhoto,
+                                                     @RequestParam("firstName") String firstName,
+                                                     @RequestParam("lastName") String lastName,
+                                                     @RequestParam("email") String email,
+                                                     @RequestParam("password") String password,
+                                                     @RequestParam("userRole") UserRole userRole) throws IOException {
 
-        // convert DTO to Entity
-        User userRequest = modelMapper.map(userData, User.class);
-        User newUser = userService.updateUser(id, userRequest);
-        // entity to DTO
-        UserData userResponse = modelMapper.map(newUser, UserData.class);
-        return ResponseEntity.ok().body(userResponse);
+
+
+        userService.updateUser(id,profilePhoto,firstName,lastName,email,password,userRole);
+        return ResponseEntity.ok().build();
     }
 
 

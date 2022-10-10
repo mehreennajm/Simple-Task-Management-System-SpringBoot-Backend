@@ -49,6 +49,9 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(nullable = true, length = 1000,name = "profile_photo")
+    private String profilePhoto;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
