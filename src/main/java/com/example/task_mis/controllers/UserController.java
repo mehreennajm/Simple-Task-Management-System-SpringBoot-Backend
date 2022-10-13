@@ -6,12 +6,15 @@ import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -41,18 +44,17 @@ public class UserController {
     public List<UserData> getListOfOrdinaryUsers(){return userService.getListOfOrdinaryUsers();}
 
 
-    @PostMapping({"/users/add-user"})
+
+    @PostMapping(value = {"/users/add-user"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> addNewUser(@RequestParam("profilePhoto") MultipartFile profilePhoto,
-                                           @RequestParam("firstName") String firstName,
+    public void addNewUser(@RequestParam("firstName") String firstName,
                                            @RequestParam("lastName") String lastName,
                                            @RequestParam("email") String email,
                                            @RequestParam("password") String password,
-                                           @RequestParam("userRole") UserRole userRole) throws IOException {
+                                           @RequestParam("role") UserRole role,
+                                           @RequestParam("profilePhoto") MultipartFile profilePhoto) throws IOException {
 
-        userService.addNewUser(profilePhoto,firstName,lastName,email,password,userRole);
-
-        return ResponseEntity.ok().build();
+        userService.addNewUser(firstName,lastName,email,password,role,profilePhoto);
     }
 
     // update User record
