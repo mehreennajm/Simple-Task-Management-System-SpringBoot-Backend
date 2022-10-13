@@ -10,8 +10,10 @@ import java.util.List;
 public interface UserService {
     List<UserData> getListOfUsers();
     List<UserData> getListOfOrdinaryUsers();
-    void addNewUser(MultipartFile file, String firstName, String LastName, String email, String password
-    , UserRole userRole) throws IOException;
+
+
+    void addNewUser(String firstName, String LastName, String email, String password
+    , UserRole role,MultipartFile file) throws IOException;
     User updateUser(Long userId, MultipartFile profilePhoto, String firstName, String lastName, String email, String password
             , UserRole userRole) throws IOException;
     void deleteUser(Long userId);

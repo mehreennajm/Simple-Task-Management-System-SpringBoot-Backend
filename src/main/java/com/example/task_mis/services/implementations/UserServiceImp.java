@@ -58,7 +58,12 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public void addNewUser(MultipartFile profilePhoto, String firstName, String lastName, String email, String password, UserRole userRole) throws IOException {
+    public void addNewUser( String firstName,
+                            String lastName,
+                            String email,
+                            String password,
+                            UserRole role,
+                            MultipartFile profilePhoto) throws IOException {
 
         User user = new User();
         user.setFirstName(firstName);
@@ -70,7 +75,7 @@ public class UserServiceImp implements UserService {
         String passwordEncode = this.passwordEncoder.encode(password);
         user.setPassword(passwordEncode);
 
-        user.setRole(userRole);
+        user.setRole(role);
 
         String fileName = localDateTime + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
         user.setProfilePhoto(fileName);
