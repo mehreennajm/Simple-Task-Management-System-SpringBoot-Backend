@@ -67,11 +67,11 @@ public class UserController {
                                                      @RequestParam("lastName") String lastName,
                                                      @RequestParam("email") String email,
                                                      @RequestParam("password") String password,
-                                                     @RequestParam("userRole") UserRole userRole) throws IOException {
+                                                     @RequestParam("role") UserRole role) throws IOException {
 
 
 
-        userService.updateUser(id,profilePhoto,firstName,lastName,email,password,userRole);
+        userService.updateUser(id,profilePhoto,firstName,lastName,email,password,role);
         return ResponseEntity.ok().build();
     }
 

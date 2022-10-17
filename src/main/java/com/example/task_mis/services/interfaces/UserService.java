@@ -15,7 +15,7 @@ public interface UserService {
     void addNewUser(String firstName, String LastName, String email, String password
     , UserRole role,MultipartFile file) throws IOException;
     User updateUser(Long userId, MultipartFile profilePhoto, String firstName, String lastName, String email, String password
-            , UserRole userRole) throws IOException;
+            , UserRole role) throws IOException;
     void deleteUser(Long userId);
     User getSpecificUserRecord(Long id);
     void updateResetPasswordToken(String token, String email);

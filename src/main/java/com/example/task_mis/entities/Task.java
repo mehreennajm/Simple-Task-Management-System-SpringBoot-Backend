@@ -42,7 +42,7 @@ public class Task {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn(name="user_id")
     private User userr;
 

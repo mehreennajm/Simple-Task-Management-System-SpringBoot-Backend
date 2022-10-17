@@ -1,10 +1,12 @@
 package com.example.task_mis.services.implementations;
 import com.example.task_mis.dto.UserData;
+import com.example.task_mis.dto.Utility;
 import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.errors.CustomError;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
+import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -76,7 +79,6 @@ public class UserServiceImp implements UserService {
         user.setPassword(passwordEncode);
 
         user.setRole(role);
-
         String fileName = localDateTime + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
         user.setProfilePhoto(fileName);
 
@@ -93,7 +95,7 @@ public class UserServiceImp implements UserService {
                            String lastName,
                            String email,
                            String password,
-                           UserRole userRole) throws IOException {
+                           UserRole role) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
@@ -103,7 +105,7 @@ public class UserServiceImp implements UserService {
 
         if (Files.exists(imagesPath)) {
             Files.delete(imagesPath);
-            String fileName = localDateTime + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+            String fileName = localDateTime + RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
 
             String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
@@ -130,7 +132,7 @@ public class UserServiceImp implements UserService {
             user.setPassword(passwordEncode);
 
         }
-        user.setRole(userRole);
+        user.setRole(role);
         userRepository.save(user);
         System.out.println("File " +
                 imagesPath.toAbsolutePath().toString() +
