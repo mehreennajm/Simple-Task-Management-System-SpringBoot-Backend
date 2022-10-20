@@ -81,7 +81,7 @@ public class ForgotPasswordController {
 
 
     @Transactional
-    @PostMapping ({ "/reset_password"})
+    @PutMapping ({ "/reset_password"})
     public void processResetPassword(HttpServletRequest request,@RequestBody User user ) {
         String token = request.getParameter("token");
         String password = user.getPassword();
