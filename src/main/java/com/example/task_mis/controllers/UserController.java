@@ -36,8 +36,8 @@ public class UserController {
     //list all of Users
     @GetMapping(value = "/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> getListOfUsers() throws IOException {
-        return new ResponseEntity(userService.getListOfUsers(), HttpStatus.OK);
+    public ResponseEntity<?> getListOfUsers() throws IOException {
+        return ResponseEntity.ok().body(userService.getListOfUsers());
     }
 
     @GetMapping({"/users/managers"})

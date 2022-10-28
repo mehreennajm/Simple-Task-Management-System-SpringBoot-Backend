@@ -74,7 +74,7 @@ public class UserServiceImp implements UserService {
         String passwordEncode = this.passwordEncoder.encode(password);
         user.setPassword(passwordEncode);
         user.setRole(role);
-        String fileName = new RandomString(30) + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+        String fileName = new RandomString(15) +  StringUtils.cleanPath(profilePhoto.getOriginalFilename());
         user.setProfilePhoto(fileName);
 
         String FILE_DIR = "../profiles/";
@@ -95,15 +95,14 @@ public class UserServiceImp implements UserService {
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
         Path imagesPath = Paths.get(
-                "/Users/mehreennajm/Desktop/profiles/" +
+                "../profiles/" +
                         user.getProfilePhoto());
 
         if (Files.exists(imagesPath)) {
             Files.delete(imagesPath);
             String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
-
-            String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
+            String FILE_DIR = "../profiles";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
 
             user.setFirstName(firstName);
@@ -139,7 +138,6 @@ public class UserServiceImp implements UserService {
 
         return user;
     }
-
     @Override
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -182,10 +180,7 @@ public class UserServiceImp implements UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
-        Path imagesPath = Paths.get("/Users/mehreennajm/Desktop/profiles/");
-        Path p = imagesPath.getFileName();
-
-        userDto.setProfilePhoto(p + "/"+ user.getProfilePhoto());
+        userDto.setProfilePhoto(user.getProfilePhoto());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }

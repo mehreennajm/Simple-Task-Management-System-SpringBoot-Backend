@@ -2,12 +2,7 @@ package com.example.task_mis.services.interfaces;
 import com.example.task_mis.dto.UserData;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
