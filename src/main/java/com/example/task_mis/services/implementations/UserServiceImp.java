@@ -102,7 +102,7 @@ public class UserServiceImp implements UserService {
             Files.delete(imagesPath);
             String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
-            String FILE_DIR = "../profiles";
+            String FILE_DIR = "../profiles/";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
 
             user.setFirstName(firstName);
