@@ -1,6 +1,7 @@
 package com.example.task_mis.services.implementations;
 import com.example.task_mis.dto.UserData;
 import com.example.task_mis.dto.Utility;
+import com.example.task_mis.entities.FileUploadUtil;
 import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.errors.CustomError;
 import com.example.task_mis.entities.User;
@@ -14,17 +15,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -37,11 +39,10 @@ public class UserServiceImp implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    LocalDateTime localDateTime = LocalDateTime.now();
-
     @Override
-    public List < UserData > getListOfUsers() {
-        List < UserData > userDataList = new ArrayList < > ();
+    public List < UserData > getListOfUsers() throws IOException {
+        List < UserData > userDataList = new ArrayList <> ();
+
         List < User > users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
         for (User user: users) {
             userDataList.add(convertUserToDto(user));
@@ -49,9 +50,8 @@ public class UserServiceImp implements UserService {
         return userDataList;
 
     }
-
     @Override
-    public List < UserData > getListOfOrdinaryUsers() {
+    public List < UserData > getListOfOrdinaryUsers() throws IOException {
         List < UserData > managerDataList = new ArrayList < > ();
         List < User > users = userRepository.findAllUsers();
         for (User user: users) {
@@ -60,13 +60,9 @@ public class UserServiceImp implements UserService {
         return managerDataList;
     }
 
+
     @Override
-    public void addNewUser( String firstName,
-                            String lastName,
-                            String email,
-                            String password,
-                            UserRole role,
-                            MultipartFile profilePhoto) throws IOException {
+    public void addNewUser(String firstName,String lastName,String email,String password, UserRole role, MultipartFile profilePhoto) throws IOException {
 
         User user = new User();
         user.setFirstName(firstName);
@@ -77,13 +73,12 @@ public class UserServiceImp implements UserService {
 
         String passwordEncode = this.passwordEncoder.encode(password);
         user.setPassword(passwordEncode);
-
         user.setRole(role);
-        String fileName = localDateTime + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+        String fileName = new RandomString(30) + StringUtils.cleanPath(profilePhoto.getOriginalFilename());
         user.setProfilePhoto(fileName);
 
-        String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
-        Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+        String FILE_DIR = "../profiles/";
+        FileUploadUtil.saveFile(FILE_DIR, fileName, profilePhoto);
 
         userRepository.save(user);
     }
@@ -105,7 +100,7 @@ public class UserServiceImp implements UserService {
 
         if (Files.exists(imagesPath)) {
             Files.delete(imagesPath);
-            String fileName = localDateTime + RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+            String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
 
             String FILE_DIR = "/Users/mehreennajm/Desktop/profiles";
@@ -131,8 +126,12 @@ public class UserServiceImp implements UserService {
             String passwordEncode = this.passwordEncoder.encode(password);
             user.setPassword(passwordEncode);
 
+            user.setRole(role);
+
+            user.setProfilePhoto(String.valueOf(profilePhoto));
+
         }
-        user.setRole(role);
+
         userRepository.save(user);
         System.out.println("File " +
                 imagesPath.toAbsolutePath().toString() +
@@ -145,18 +144,17 @@ public class UserServiceImp implements UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-        Path imagesPath = Paths.get(
-                "/Users/mehreennajm/Desktop/profiles/" +
+        Path imagesPath = Paths.get("../profiles/" +
                         user.getProfilePhoto());
 
         try {
             Files.delete(imagesPath);
             System.out.println("File " +
-                    imagesPath.toAbsolutePath().toString() +
+                    imagesPath.toAbsolutePath() +
                     " successfully removed");
         } catch (IOException e) {
             System.err.println("Unable to delete " +
-                    imagesPath.toAbsolutePath().toString() +
+                    imagesPath.toAbsolutePath() +
                     " due to...");
             e.printStackTrace();
         }
@@ -178,13 +176,16 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
-    private UserData convertUserToDto(User user) {
+    private UserData convertUserToDto(User user) throws IOException {
         UserData userDto = modelMapper.map(user, UserData.class);
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
-        userDto.setProfilePhoto(user.getProfilePhoto());
+        Path imagesPath = Paths.get("/Users/mehreennajm/Desktop/profiles/");
+        Path p = imagesPath.getFileName();
+
+        userDto.setProfilePhoto(p + "/"+ user.getProfilePhoto());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }
@@ -210,5 +211,6 @@ public class UserServiceImp implements UserService {
         user.setResetPasswordToken(null);
         userRepository.save(user);
     }
+
 
 }

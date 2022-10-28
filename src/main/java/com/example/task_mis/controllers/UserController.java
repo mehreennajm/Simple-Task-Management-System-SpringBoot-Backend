@@ -3,45 +3,47 @@ import com.example.task_mis.dto.UserData;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.services.interfaces.UserService;
-import org.modelmapper.ModelMapper;
+import org.modelmapper.ConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartResolver;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 
 @SpringBootApplication
-@CrossOrigin (origins = "http://localhost:4200/")
+@CrossOrigin (origins = "*")
 @RestController
 @RequestMapping({"api"})
 public class UserController {
 
-    @Autowired
-    private ModelMapper modelMapper;
-    //Injected UserService into Controller to access the methods
 
+    private static final String EXTERNAL_FILE_PATH = "/Users/mehreennajm/Desktop/profiles/";
     @Autowired
     private  UserService userService;
 
+
+
+
     //list all of Users
-    @GetMapping({"/users"})
+    @GetMapping(value = "/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<UserData> getListOfUsers(){return userService.getListOfUsers();}
+    public ResponseEntity<User> getListOfUsers() throws IOException {
+        return new ResponseEntity(userService.getListOfUsers(), HttpStatus.OK);
+    }
 
     @GetMapping({"/users/managers"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    public List<UserData> getListOfOrdinaryUsers(){return userService.getListOfOrdinaryUsers();}
+    public List<UserData> getListOfOrdinaryUsers() throws IOException {return userService.
+            getListOfOrdinaryUsers();}
 
 
 
@@ -57,17 +59,20 @@ public class UserController {
         userService.addNewUser(firstName,lastName,email,password,role,profilePhoto);
     }
 
+
+
     // update User record
     @Transactional
-    @PutMapping({"/users/{id}/edit"})
+    @PutMapping(value="/users/{id}/edit",consumes={MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE},
+            produces={MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<User> updateUserRecord(@PathVariable Long id,
-                                                     @RequestParam("profilePhoto") MultipartFile profilePhoto,
+                                                     @RequestParam(value = "profilePhoto") MultipartFile profilePhoto,
                                                      @RequestParam("firstName") String firstName,
                                                      @RequestParam("lastName") String lastName,
                                                      @RequestParam("email") String email,
                                                      @RequestParam("password") String password,
-                                                     @RequestParam("role") UserRole role) throws IOException {
+                                                     @RequestParam("role") UserRole role) throws IOException, ConfigurationException {
 
 
 

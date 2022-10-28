@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
-    Optional<User> findUserByFirstName(String firstName);
 
     User findUserByEmail(String email);
 
@@ -21,9 +20,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
 
     @Query("SELECT u FROM User u WHERE u.email = ?1")
-    public User findByEmail(String email);
+     User findByEmail(String email);
 
-    public User findByResetPasswordToken(String token);
+     User findByResetPasswordToken(String token);
+
 
 
 
