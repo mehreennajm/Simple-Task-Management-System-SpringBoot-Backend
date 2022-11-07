@@ -7,19 +7,16 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
-    List < UserData > getListOfUsers() throws IOException;
+    List<UserData> getListOfUsers() throws IOException;
     List<UserData> getListOfOrdinaryUsers() throws IOException;
-
-
-    void addNewUser(String firstName, String LastName, String email, String password
-    , UserRole role,MultipartFile file) throws IOException;
-    User updateUser(Long userId, MultipartFile profilePhoto, String firstName, String lastName, String email, String password
-            , UserRole role) throws IOException;
+    void addNewUser(String firstName, String LastName, String email, String password, UserRole role,MultipartFile file) throws IOException;
+    User updateUser(Long userId,MultipartFile profilePhoto, String firstName, String lastName, String email, String password, UserRole role) throws IOException;
     void deleteUser(Long userId);
     User getSpecificUserRecord(Long id);
     void updateResetPasswordToken(String token, String email);
     User getByResetPasswordToken(String token);
     void updatePassword(User customer, String newPassword);
+
 
 
 }

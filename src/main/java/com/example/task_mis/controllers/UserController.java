@@ -1,8 +1,9 @@
 package com.example.task_mis.controllers;
-import com.example.task_mis.dto.UserData;
+import com.example.task_mis.dto.Utility;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.services.interfaces.UserService;
+import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,10 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.*;
-import java.util.List;
+import java.util.Optional;
 
 
 @SpringBootApplication
@@ -25,13 +25,8 @@ import java.util.List;
 @RequestMapping({"api"})
 public class UserController {
 
-
-    private static final String EXTERNAL_FILE_PATH = "/Users/mehreennajm/Desktop/profiles/";
     @Autowired
     private  UserService userService;
-
-
-
 
     //list all of Users
     @GetMapping(value = "/users")
@@ -42,19 +37,23 @@ public class UserController {
 
     @GetMapping({"/users/managers"})
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    public List<UserData> getListOfOrdinaryUsers() throws IOException {return userService.
-            getListOfOrdinaryUsers();}
+    public ResponseEntity<?> getListOfOrdinaryUsers() throws IOException {
+        return ResponseEntity.ok().body(userService.getListOfOrdinaryUsers());
+    }
 
 
 
     @PostMapping(value = {"/users/add-user"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void addNewUser(@RequestParam("firstName") String firstName,
+    public void addNewUser(
+                                           @RequestParam("firstName") String firstName,
                                            @RequestParam("lastName") String lastName,
                                            @RequestParam("email") String email,
                                            @RequestParam("password") String password,
                                            @RequestParam("role") UserRole role,
                                            @RequestParam("profilePhoto") MultipartFile profilePhoto) throws IOException {
+
+
 
         userService.addNewUser(firstName,lastName,email,password,role,profilePhoto);
     }
@@ -63,21 +62,22 @@ public class UserController {
 
     // update User record
     @Transactional
-    @PutMapping(value="/users/{id}/edit",consumes={MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE},
-            produces={MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
+    @PutMapping(value = "/users/{id}/edit",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> updateUserRecord(@PathVariable Long id,
-                                                     @RequestParam(value = "profilePhoto") MultipartFile profilePhoto,
-                                                     @RequestParam("firstName") String firstName,
-                                                     @RequestParam("lastName") String lastName,
-                                                     @RequestParam("email") String email,
-                                                     @RequestParam("password") String password,
-                                                     @RequestParam("role") UserRole role) throws IOException, ConfigurationException {
+    public ResponseEntity<User> updateUserRecord(
+                                                    @PathVariable Long id,
+                                                    @RequestParam("profilePhoto") MultipartFile profilePhoto,
+                                                    @RequestParam("firstName") String firstName,
+                                                    @RequestParam("lastName") String lastName,
+                                                    @RequestParam("email") String email,
+                                                    @RequestParam("password") String password,
+                                                    @RequestParam("role") UserRole role) throws IOException, ConfigurationException {
 
 
 
-        userService.updateUser(id,profilePhoto,firstName,lastName,email,password,role);
-        return ResponseEntity.ok().build();
+
+
+        return ResponseEntity.ok().body(userService.updateUser(id,profilePhoto,firstName,lastName,email,password,role));
     }
 
 

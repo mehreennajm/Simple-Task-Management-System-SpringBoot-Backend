@@ -1,11 +1,14 @@
 package com.example.task_mis.respositories;
 
+import com.example.task_mis.dto.UserData;
 import com.example.task_mis.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {

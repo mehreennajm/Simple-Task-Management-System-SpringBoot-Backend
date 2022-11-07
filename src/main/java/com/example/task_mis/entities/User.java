@@ -10,9 +10,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
-        })
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -51,6 +49,7 @@ public class User {
 
     @Column(nullable = true, length = 1000,name = "profile_photo")
     private String profilePhoto;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
