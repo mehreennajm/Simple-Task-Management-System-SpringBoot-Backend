@@ -8,6 +8,7 @@ import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -93,16 +94,21 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, MultipartFile profilePhoto, String firstName, String lastName, String email, String password, UserRole role) throws IOException {
+    public User updateUser(Long userId, @NotNull MultipartFile profilePhoto  , String firstName, String lastName, String email, String password, UserRole role) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
-        Path imagesPath = Paths.get("../profiles/" + user.getProfilePhoto());
+
+
+            Path imagesPath = Paths.get("../profiles/" + user.getProfilePhoto());
+
             Files.delete(imagesPath);
+
             String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
             String FILE_DIR = "../profiles/";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);

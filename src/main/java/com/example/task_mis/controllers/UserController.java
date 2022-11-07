@@ -62,7 +62,7 @@ public class UserController {
 
     // update User record
     @Transactional
-    @PutMapping(value = "/users/{id}/edit",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/users/{id}/edit",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<User> updateUserRecord(
                                                     @PathVariable Long id,
