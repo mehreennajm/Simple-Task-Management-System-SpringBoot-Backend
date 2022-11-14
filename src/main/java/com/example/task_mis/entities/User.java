@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -47,15 +46,9 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(nullable = true, length = 1000,name = "profile_photo")
-    private String profilePhoto;
+    @Column(nullable = true,name = "profile_photo")
+    private byte[] profilePhoto;
 
-
-    @Transient
-    public String getPhotosImagePath() {
-        if (profilePhoto == null ) return null;
-        return "/user-photos/" + profilePhoto;
-    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -7,6 +7,7 @@ import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +68,10 @@ public class UserServiceImp implements UserService {
         user.setRole(role);
 
         //Storing file in Database and the Directory
-        String fileName = new RandomString(10) +  StringUtils.cleanPath(profilePhoto.getOriginalFilename());
-        user.setProfilePhoto(fileName);
+        byte[] encodeBase64 = Base64.encodeBase64(user.getProfilePhoto());
+        user.setProfilePhoto(encodeBase64);
         String FILE_DIR = "user-photos/";
-        FileUploadUtil.saveFile(FILE_DIR, fileName, profilePhoto);
+        FileUploadUtil.saveFile(FILE_DIR, encodeBase64.toString(), profilePhoto);
 
         userRepository.save(user);
     }
@@ -80,13 +81,17 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
+        Path imagesPath = Paths.get("user-photos/" + user.getProfilePhoto());
+        Files.delete(imagesPath);
+        //Storing file in Database and the Directory
+        byte[] encodeBase64 = Base64.encodeBase64(user.getProfilePhoto());
+        String base64Encoded = new String(encodeBase64, "UTF-8");
+        user.setProfilePhoto(base64Encoded.getBytes());
+        String FILE_DIR = "user-photos/";
+        FileUploadUtil.saveFile(FILE_DIR, base64Encoded, profilePhoto);
+        Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + base64Encoded), StandardCopyOption.REPLACE_EXISTING);
 
-            Path imagesPath = Paths.get("user-photos/" + user.getProfilePhoto());
-            Files.delete(imagesPath);
-            String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
-            user.setProfilePhoto(fileName);
-            String FILE_DIR = "user-photos/";
-            Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+
 
             user.setFirstName(firstName);
             user.setLastName(lastName);
@@ -140,7 +145,7 @@ public class UserServiceImp implements UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
-        userDto.setProfilePhoto(user.getPhotosImagePath());
+        userDto.setProfilePhoto(user.getProfilePhoto());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }
