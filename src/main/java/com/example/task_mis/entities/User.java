@@ -47,7 +47,7 @@ public class User {
     private String password;
 
     @Column(nullable = true,name = "profile_photo")
-    private byte[] profilePhoto;
+    private String profilePhoto;
 
 
     @Enumerated(EnumType.STRING)
