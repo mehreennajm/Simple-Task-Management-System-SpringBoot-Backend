@@ -1,22 +1,17 @@
 package com.example.task_mis.controllers;
-import com.example.task_mis.dto.Utility;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.services.interfaces.UserService;
-import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.*;
-import java.util.Optional;
 
 
 @SpringBootApplication

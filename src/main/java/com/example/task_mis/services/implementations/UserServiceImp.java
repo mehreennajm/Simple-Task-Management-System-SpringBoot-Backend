@@ -1,6 +1,5 @@
 package com.example.task_mis.services.implementations;
 import com.example.task_mis.dto.UserData;
-import com.example.task_mis.dto.Utility;
 import com.example.task_mis.entities.FileUploadUtil;
 import com.example.task_mis.enums.UserRole;
 import com.example.task_mis.errors.CustomError;
@@ -12,30 +11,17 @@ import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.*;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -49,10 +35,9 @@ public class UserServiceImp implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
     @Override
-    public List<UserData> getListOfUsers() throws IOException {
+    public List<UserData> getListOfUsers(){
         List < UserData > userDataList = new ArrayList <> ();
-
-        List < User > users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
+        List <User> users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
         for (User user: users) {
             userDataList.add(convertUserToDto(user));
         }
@@ -60,10 +45,9 @@ public class UserServiceImp implements UserService {
 
     }
     @Override
-    public List<UserData> getListOfOrdinaryUsers() throws IOException {
-        List < UserData > managerDataList = new ArrayList < > ();
-
-        List < User > users = userRepository.findAllUsers();
+    public List<UserData> getListOfOrdinaryUsers(){
+        List <UserData> managerDataList = new ArrayList <> ();
+        List <User> users = userRepository.findAllUsers();
         for (User user: users) {
             managerDataList.add(convertUserToDto(user));
         }
@@ -76,37 +60,32 @@ public class UserServiceImp implements UserService {
 
         User user = new User();
         user.setFirstName(firstName);
-
         user.setLastName(lastName);
-
         user.setEmail(email);
-
         String passwordEncode = this.passwordEncoder.encode(password);
         user.setPassword(passwordEncode);
         user.setRole(role);
-        String fileName = new RandomString(15) +  StringUtils.cleanPath(profilePhoto.getOriginalFilename());
-        user.setProfilePhoto(fileName);
 
-        String FILE_DIR = "../profiles/";
+        //Storing file in Database and the Directory
+        String fileName = new RandomString(10) +  StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+        user.setProfilePhoto(fileName);
+        String FILE_DIR = "user-photos/";
         FileUploadUtil.saveFile(FILE_DIR, fileName, profilePhoto);
 
         userRepository.save(user);
     }
 
     @Override
-    public User updateUser(Long userId, @NotNull MultipartFile profilePhoto  , String firstName, String lastName, String email, String password, UserRole role) throws IOException {
+    public User updateUser(Long userId, @NotNull MultipartFile profilePhoto , String firstName, String lastName, String email, String password, UserRole role) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
 
-
-            Path imagesPath = Paths.get("../profiles/" + user.getProfilePhoto());
-
+            Path imagesPath = Paths.get("user-photos/" + user.getProfilePhoto());
             Files.delete(imagesPath);
-
             String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
-            String FILE_DIR = "../profiles/";
+            String FILE_DIR = "user-photos/";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
 
             user.setFirstName(firstName);
@@ -122,7 +101,7 @@ public class UserServiceImp implements UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-        Path imagesPath = Paths.get("../profiles/" +
+        Path imagesPath = Paths.get("user-photos/" +
                         user.getProfilePhoto());
 
         try {
@@ -143,7 +122,8 @@ public class UserServiceImp implements UserService {
     @Override
     public User getSpecificUserRecord(Long id) {
         Optional < User > userOptional = userRepository.findById(id);
-        User newUser = null;
+
+        User newUser;
         if (userOptional.isPresent()) {
             newUser = userOptional.get();
         } else {
@@ -154,13 +134,13 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
-    private UserData convertUserToDto(User user) throws IOException {
+    private UserData convertUserToDto(User user){
         UserData userDto = modelMapper.map(user, UserData.class);
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
-        userDto.setProfilePhoto(user.getProfilePhoto());
+        userDto.setProfilePhoto(user.getPhotosImagePath());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }
