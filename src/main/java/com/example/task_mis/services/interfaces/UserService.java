@@ -4,6 +4,9 @@ import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,6 +21,5 @@ public interface UserService {
     User getByResetPasswordToken(String token);
     void updatePassword(User customer, String newPassword);
 
-
-
+    String getImage(String imageName) throws IOException;
 }

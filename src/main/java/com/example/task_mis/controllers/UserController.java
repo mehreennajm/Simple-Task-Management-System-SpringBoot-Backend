@@ -1,6 +1,7 @@
 package com.example.task_mis.controllers;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
+import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.*;
+import java.util.Optional;
 
 
 @SpringBootApplication
@@ -23,11 +27,22 @@ public class UserController {
     @Autowired
     private  UserService userService;
 
+
+    @Autowired
+    private UserRepository userRepository;
+
     //list all of Users
     @GetMapping(value = "/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getListOfUsers() throws IOException {
         return ResponseEntity.ok().body(userService.getListOfUsers());
+    }
+
+
+    @GetMapping(path = {"/{name}"})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> getImage(@PathVariable("name") String name) throws IOException {
+        return ResponseEntity.ok().body(userService.getImage(name));
     }
 
     @GetMapping({"/users/managers"})

@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,6 +45,13 @@ public class UserServiceImp implements UserService {
         }
         return userDataList;
 
+    }
+
+    @Override
+    public String getImage(String imageName) throws IOException {
+        File image = new File("user-photos/"+ imageName);
+        String encodeImage = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(image.toPath()));
+        return encodeImage;
     }
     @Override
     public List<UserData> getListOfOrdinaryUsers(){
@@ -139,7 +148,7 @@ public class UserServiceImp implements UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
-        userDto.setProfilePhoto(user.getProfilePhoto());
+        userDto.setProfilePhoto(user.getPhotosImagePath());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }
