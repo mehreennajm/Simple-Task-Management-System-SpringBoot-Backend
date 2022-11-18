@@ -148,7 +148,7 @@ public class UserServiceImp implements UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
-        userDto.setProfilePhoto(user.getPhotosImagePath());
+        userDto.setProfilePhoto(user.getProfilePhoto());
         userDto.setRole(user.getRole().toString());
         return userDto;
     }

@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
      User findByResetPasswordToken(String token);
 
-    Optional<User> findUserByProfilePhoto(String imageName);
+
 
 
 }

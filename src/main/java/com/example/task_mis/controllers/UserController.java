@@ -11,11 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.*;
-import java.util.Optional;
 
 
 @SpringBootApplication
@@ -39,7 +36,7 @@ public class UserController {
     }
 
 
-    @GetMapping(path = {"/{name}"})
+    @GetMapping(path = {"/users/{name}"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> getImage(@PathVariable("name") String name) throws IOException {
         return ResponseEntity.ok().body(userService.getImage(name));
