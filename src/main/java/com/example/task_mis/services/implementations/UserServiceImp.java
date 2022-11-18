@@ -9,7 +9,6 @@ import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,9 +29,10 @@ public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.modelMapper = modelMapper;
     }
     @Override
     public List<UserData> getListOfUsers(){
@@ -50,8 +48,7 @@ public class UserServiceImp implements UserService {
     @Override
     public String getImage(String imageName) throws IOException {
         File image = new File("user-photos/"+ imageName);
-        String encodeImage = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(image.toPath()));
-        return encodeImage;
+        return Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(image.toPath()));
     }
     @Override
     public List<UserData> getListOfOrdinaryUsers(){
@@ -96,6 +93,7 @@ public class UserServiceImp implements UserService {
             user.setProfilePhoto(fileName);
             String FILE_DIR = "user-photos/";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);
@@ -140,8 +138,7 @@ public class UserServiceImp implements UserService {
         return newUser;
     }
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     private UserData convertUserToDto(User user){
         UserData userDto = modelMapper.map(user, UserData.class);
         userDto.setFirstName(user.getFirstName());
