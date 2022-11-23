@@ -52,6 +52,11 @@ public class TaskServiceImp implements TaskService {
     public void updateTask(Long taskId, Task task) {
         Task newTask = taskRepository.findById(taskId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
+        newTask.setTitle(task.getTitle());
+        newTask.setDescription(task.getDescription());
+        newTask.setCreateDate(task.getCreateDate());
+        newTask.setDueDate(task.getDueDate());
+        newTask.setStatus(task.getStatus());
         newTask.setUserr(task.getUserr());
         taskRepository.save(task);
     }
@@ -72,7 +77,7 @@ public class TaskServiceImp implements TaskService {
         taskDto.setStatus(task.getStatus());
         taskDto.setCreateDate(task.getCreateDate());
         taskDto.setDueDate(task.getDueDate());
-        taskDto.setUserr(task.getUserr().getFirstName() + ' ' + task.getUserr().getLastName());
+        taskDto.setUserr(task.getUserr());
         return taskDto;
     }
     

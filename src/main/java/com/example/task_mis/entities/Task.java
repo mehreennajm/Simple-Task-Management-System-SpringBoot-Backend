@@ -41,7 +41,7 @@ public class Task {
     private TaskStatus status;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.MERGE)
     @JoinColumn(name="user_id")
     private User userr;
