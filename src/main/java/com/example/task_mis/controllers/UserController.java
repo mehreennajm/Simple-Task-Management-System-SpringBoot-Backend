@@ -1,10 +1,8 @@
 package com.example.task_mis.controllers;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
-import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import org.modelmapper.ConfigurationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +19,12 @@ import java.io.*;
 @RequestMapping({"api"})
 public class UserController {
 
-    @Autowired
-    private  UserService userService;
+    private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-    @Autowired
-    private UserRepository userRepository;
 
     //list all of Users
     @GetMapping(value = "/users")
@@ -36,7 +34,7 @@ public class UserController {
     }
 
 
-    @GetMapping(path = {"/users/{name}"})
+    @GetMapping(path = {"/{name}"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> getImage(@PathVariable("name") String name) throws IOException {
         return ResponseEntity.ok().body(userService.getImage(name));
@@ -92,8 +90,7 @@ public class UserController {
     @GetMapping({"/users/{id}"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public User getSpecificRecord(@PathVariable(value = "id") Long userId){
-        User user = userService.getSpecificUserRecord(userId);
-        return user;
+        return userService.getSpecificUserRecord(userId);
     }
 
     @DeleteMapping({"/users/{id}/delete"})

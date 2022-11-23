@@ -35,10 +35,13 @@ public class UserServiceImp implements UserService {
         this.modelMapper = modelMapper;
     }
     @Override
-    public List<UserData> getListOfUsers(){
+    public List<UserData> getListOfUsers() throws IOException {
         List < UserData > userDataList = new ArrayList <> ();
         List <User> users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
         for (User user: users) {
+            File image = new File("user-photos/"+ user.getProfilePhoto());
+            String encodeUrl = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(image.toPath()));
+            user.setProfilePhoto(encodeUrl);
             userDataList.add(convertUserToDto(user));
         }
         return userDataList;
