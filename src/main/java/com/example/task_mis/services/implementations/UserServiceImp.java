@@ -96,7 +96,6 @@ public class UserServiceImp implements UserService {
             user.setProfilePhoto(fileName);
             String FILE_DIR = "user-photos/";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
-
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);

@@ -46,15 +46,15 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(nullable = true,name = "profile_photo")
+    @Column(nullable = false,name = "profile_photo")
     private String profilePhoto;
 
 
-    @Transient
-    public String getPhotosImagePath() {
-        if (profilePhoto == null ) return null;
-        return "user-photos/" +  profilePhoto;
-    }
+//    @Transient
+//    public String getPhotosImagePath() {
+//        if (profilePhoto == null ) return null;
+//        return "user-photos/" +  profilePhoto;
+//    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

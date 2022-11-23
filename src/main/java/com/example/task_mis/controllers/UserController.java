@@ -47,19 +47,15 @@ public class UserController {
     }
 
 
-
     @PostMapping(value = {"/users/add-user"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void addNewUser(
-                                           @RequestParam("firstName") String firstName,
-                                           @RequestParam("lastName") String lastName,
-                                           @RequestParam("email") String email,
-                                           @RequestParam("password") String password,
-                                           @RequestParam("role") UserRole role,
-                                           @RequestParam("profilePhoto") MultipartFile profilePhoto) throws IOException {
-
-
-
+    public void addNewUser(@RequestParam("firstName") String firstName,
+                           @RequestParam("lastName") String lastName,
+                           @RequestParam("email") String email,
+                           @RequestParam("password") String password,
+                           @RequestParam("role") UserRole role,
+                           @RequestParam("profilePhoto") MultipartFile profilePhoto) throws IOException
+    {
         userService.addNewUser(firstName,lastName,email,password,role,profilePhoto);
     }
 
@@ -67,21 +63,16 @@ public class UserController {
 
     // update User record
     @Transactional
-    @PutMapping(value = "/users/{id}/edit",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/users/{id}/edit")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> updateUserRecord(
-                                                    @PathVariable Long id,
-                                                    @RequestParam("profilePhoto") MultipartFile profilePhoto,
-                                                    @RequestParam("firstName") String firstName,
-                                                    @RequestParam("lastName") String lastName,
-                                                    @RequestParam("email") String email,
-                                                    @RequestParam("password") String password,
-                                                    @RequestParam("role") UserRole role) throws IOException, ConfigurationException {
-
-
-
-
-
+    public ResponseEntity<User> updateUserRecord(@PathVariable Long id,
+                                                 @RequestParam("profilePhoto") MultipartFile profilePhoto,
+                                                 @RequestParam("firstName") String firstName,
+                                                 @RequestParam("lastName") String lastName,
+                                                 @RequestParam("email") String email,
+                                                 @RequestParam("password") String password,
+                                                 @RequestParam("role") UserRole role) throws IOException
+    {
         return ResponseEntity.ok().body(userService.updateUser(id,profilePhoto,firstName,lastName,email,password,role));
     }
 
@@ -89,10 +80,13 @@ public class UserController {
     //getting a specific User via id
     @GetMapping({"/users/{id}"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public User getSpecificRecord(@PathVariable(value = "id") Long userId){
+    public User getSpecificRecord(@PathVariable(value = "id") Long userId)
+    {
         return userService.getSpecificUserRecord(userId);
     }
 
+
+    //deleting a specific User via id
     @DeleteMapping({"/users/{id}/delete"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deletePost(@PathVariable(name = "id") Long userId) {
