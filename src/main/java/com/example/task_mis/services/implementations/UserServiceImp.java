@@ -89,15 +89,21 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
-
+        if(!profilePhoto.getOriginalFilename().equals(user.getProfilePhoto()) ){
             Path imagesPath = Paths.get("user-photos/" + user.getProfilePhoto());
             Files.delete(imagesPath);
             String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
             user.setProfilePhoto(fileName);
             String FILE_DIR = "user-photos/";
             Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+        }
+        else{
+            user.setProfilePhoto(profilePhoto.getOriginalFilename());
+        }
+
             user.setFirstName(firstName);
             user.setLastName(lastName);
+            user.setRole(role);
             user.setEmail(email);
             String passwordEncode = this.passwordEncoder.encode(password);
             user.setPassword(passwordEncode);
@@ -114,13 +120,9 @@ public class UserServiceImp implements UserService {
 
         try {
             Files.delete(imagesPath);
-            System.out.println("File " +
-                    imagesPath.toAbsolutePath() +
-                    " successfully removed");
+            System.out.println("File " + imagesPath.toAbsolutePath() + " successfully removed");
         } catch (IOException e) {
-            System.err.println("Unable to delete " +
-                    imagesPath.toAbsolutePath() +
-                    " due to...");
+            System.err.println("Unable to delete " + imagesPath.toAbsolutePath() + " due to...");
             e.printStackTrace();
         }
 
