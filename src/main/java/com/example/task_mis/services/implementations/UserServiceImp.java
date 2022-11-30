@@ -85,7 +85,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, @NotNull MultipartFile profilePhoto , String firstName, String lastName, String email, UserRole role) throws IOException {
+    public User updateUser(Long userId, @NotNull MultipartFile profilePhoto , String firstName, String lastName, String email,UserRole role) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
 
@@ -105,6 +105,7 @@ public class UserServiceImp implements UserService {
             user.setLastName(lastName);
             user.setRole(role);
             user.setEmail(email);
+
             userRepository.save(user);
             return user;
     }
