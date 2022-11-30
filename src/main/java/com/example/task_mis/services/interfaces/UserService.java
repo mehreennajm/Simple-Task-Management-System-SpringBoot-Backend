@@ -2,11 +2,7 @@ package com.example.task_mis.services.interfaces;
 import com.example.task_mis.dto.UserData;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
-
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
