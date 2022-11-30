@@ -70,10 +70,9 @@ public class UserController {
                                                  @RequestParam("firstName") String firstName,
                                                  @RequestParam("lastName") String lastName,
                                                  @RequestParam("email") String email,
-                                                 @RequestParam("password") String password,
                                                  @RequestParam("role") UserRole role) throws IOException
     {
-        return ResponseEntity.ok().body(userService.updateUser(id,profilePhoto,firstName,lastName,email,password,role));
+        return ResponseEntity.ok().body(userService.updateUser(id,profilePhoto,firstName,lastName,email,role));
     }
 
 
