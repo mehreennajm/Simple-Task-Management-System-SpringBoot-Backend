@@ -8,6 +8,7 @@ import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
@@ -85,27 +87,26 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, @NotNull MultipartFile profilePhoto , String firstName, String lastName, String email,UserRole role) throws IOException {
+    public User updateUser(Long userId , String firstName, String lastName, String email, UserRole role, @Nullable MultipartFile profilePhoto) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalStateException(CustomError.ID_NOT_FOUND_ERROR));
-
-        if(!profilePhoto.getOriginalFilename().equals(user.getProfilePhoto()) ){
-            Path imagesPath = Paths.get("user-photos/" + user.getProfilePhoto());
-            Files.delete(imagesPath);
-            String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
-            user.setProfilePhoto(fileName);
-            String FILE_DIR = "user-photos/";
-            Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+        if(!Objects.isNull(profilePhoto)){
+            if(!profilePhoto.getOriginalFilename().equals(user.getProfilePhoto())){
+                Path imagesPath = Paths.get("user-photos/" + user.getProfilePhoto());
+                Files.delete(imagesPath);
+                String fileName = RandomString.make(10) +StringUtils.cleanPath(profilePhoto.getOriginalFilename());
+                user.setProfilePhoto(fileName);
+                String FILE_DIR = "user-photos/";
+                Files.copy(profilePhoto.getInputStream(), Paths.get(FILE_DIR + File.separator + fileName), StandardCopyOption.REPLACE_EXISTING);
+            }
+            else{
+                user.setProfilePhoto(profilePhoto.getOriginalFilename());
+            }
         }
-        else{
-            user.setProfilePhoto(profilePhoto.getOriginalFilename());
-        }
-
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setRole(role);
             user.setEmail(email);
-
             userRepository.save(user);
             return user;
     }

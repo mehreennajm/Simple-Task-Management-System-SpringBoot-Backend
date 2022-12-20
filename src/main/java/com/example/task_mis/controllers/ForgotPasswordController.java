@@ -14,6 +14,11 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.UUID;
 
 
 @RestController
@@ -29,7 +34,8 @@ public class ForgotPasswordController {
     @PostMapping("/forgot_password")
     public void processForgotPassword(HttpServletRequest request,@RequestBody  User user) {
         String email = user.getEmail();
-        String token = RandomString.make(30);
+        LocalTime localTime = LocalTime.now();
+        String token = UUID.randomUUID()+RandomString.make(30)+localTime;
 
         try {
             userService.updateResetPasswordToken(token, email);
@@ -64,11 +70,9 @@ public class ForgotPasswordController {
                 + "or you have not made the request.</p>";
 
         helper.setSubject(subject);
-
-
         helper.setText(content, true);
-
         mailSender.send(message);
+
     }
 
 
@@ -87,9 +91,6 @@ public class ForgotPasswordController {
         String password = user.getPassword();
         User userServiceByResetPasswordToken = userService.getByResetPasswordToken(token);
             userService.updatePassword(userServiceByResetPasswordToken, password);
-
-
-
     }
 
 

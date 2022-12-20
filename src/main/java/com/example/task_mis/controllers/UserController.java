@@ -6,6 +6,7 @@ import org.modelmapper.ConfigurationException;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,13 +67,14 @@ public class UserController {
     @PutMapping(value = "/users/{id}/edit")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<User> updateUserRecord(@PathVariable Long id,
-                                                 @RequestParam("profilePhoto") MultipartFile profilePhoto,
                                                  @RequestParam("firstName") String firstName,
                                                  @RequestParam("lastName") String lastName,
                                                  @RequestParam("email") String email,
-                                                 @RequestParam("role") UserRole role) throws IOException
+                                                 @RequestParam("role") UserRole role,
+                                                 @RequestParam("profilePhoto") @Nullable MultipartFile profilePhoto
+                                                 ) throws IOException
     {
-        return ResponseEntity.ok().body(userService.updateUser(id,profilePhoto,firstName,lastName,email,role));
+        return ResponseEntity.ok().body(userService.updateUser(id,firstName,lastName,email,role,profilePhoto));
     }
 
 
