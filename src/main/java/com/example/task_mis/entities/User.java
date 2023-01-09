@@ -58,6 +58,9 @@ public class User {
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 
+    @Column(name = "expired_link")
+    private int expiredLink;
+
     @JsonIgnore
     @OneToMany(mappedBy = "userr",cascade = CascadeType.ALL)
     private List<Task> tasks;

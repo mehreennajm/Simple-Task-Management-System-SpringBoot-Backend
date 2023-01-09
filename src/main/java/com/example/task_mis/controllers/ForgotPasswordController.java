@@ -3,8 +3,10 @@ import com.example.task_mis.dto.Utility;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
+import org.hibernate.id.UUIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,11 +16,8 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.UUID;
+
 
 
 @RestController
@@ -30,12 +29,29 @@ public class ForgotPasswordController {
     @Autowired
     private UserService userService;
 
+    @GetMapping({"/reset_password",})
+    public User showResetPasswordForm(@Param(value = "token") String token) {
+        User user = userService.getByResetPasswordToken(token);
+        if(user.getExpiredLink() == 1 ){
+            throw new RuntimeException("page expired!");
+        }
+        if(user == null){
+            throw new RuntimeException("Token is not valid or expired!");
+        }
+        else {
+            user.setResetPasswordToken(token);
+        }
+
+        return user;
+    }
 
     @PostMapping("/forgot_password")
     public void processForgotPassword(HttpServletRequest request,@RequestBody  User user) {
         String email = user.getEmail();
         LocalTime localTime = LocalTime.now();
-        String token = UUID.randomUUID()+RandomString.make(30)+localTime;
+
+        String token = new RandomString(30)+UUIDGenerator.GENERATOR_NAME + localTime;
+
 
         try {
             userService.updateResetPasswordToken(token, email);
@@ -54,9 +70,10 @@ public class ForgotPasswordController {
     public void sendEmail(String recipientEmail, String link)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        helper.setFrom("mehreen.najm@gmail.com", "Customer Support");
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        int time = LocalTime.now().getMinute();
+        helper.setFrom("TMIS@gmail.com", "Customer Support");
         helper.setTo(recipientEmail);
 
         String subject = "Here's the link to reset your password";
@@ -71,17 +88,13 @@ public class ForgotPasswordController {
 
         helper.setSubject(subject);
         helper.setText(content, true);
+
         mailSender.send(message);
 
     }
 
 
-    @GetMapping({"/reset_password",})
-    public User showResetPasswordForm(@Param(value = "token") String token) {
-        User user = userService.getByResetPasswordToken(token);
-        user.setResetPasswordToken(token);
-        return user;
-    }
+
 
 
     @Transactional
@@ -90,7 +103,8 @@ public class ForgotPasswordController {
         String token = request.getParameter("token");
         String password = user.getPassword();
         User userServiceByResetPasswordToken = userService.getByResetPasswordToken(token);
-            userService.updatePassword(userServiceByResetPasswordToken, password);
+        userService.updatePassword(userServiceByResetPasswordToken, password);
+
     }
 
 
