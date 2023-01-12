@@ -178,7 +178,6 @@ public class UserServiceImp implements UserService {
         else  {
             user.setPassword(encodedPassword);
             user.setResetPasswordToken(null);
-            user.setExpiredLink(1);
         }
         userRepository.save(user);
     }

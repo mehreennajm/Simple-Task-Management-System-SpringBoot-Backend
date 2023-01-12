@@ -3,10 +3,8 @@ import com.example.task_mis.dto.Utility;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
-import org.hibernate.id.UUIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +14,10 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalTime;
-
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 
 @RestController
@@ -29,12 +29,11 @@ public class ForgotPasswordController {
     @Autowired
     private UserService userService;
 
-    @GetMapping({"/reset_password",})
+    @GetMapping({"/reset_password"})
     public User showResetPasswordForm(@Param(value = "token") String token) {
+
         User user = userService.getByResetPasswordToken(token);
-        if(user.getExpiredLink() == 1 ){
-            throw new RuntimeException("page expired!");
-        }
+
         if(user == null){
             throw new RuntimeException("Token is not valid or expired!");
         }
@@ -48,9 +47,13 @@ public class ForgotPasswordController {
     @PostMapping("/forgot_password")
     public void processForgotPassword(HttpServletRequest request,@RequestBody  User user) {
         String email = user.getEmail();
-        LocalTime localTime = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-        String token = new RandomString(30)+UUIDGenerator.GENERATOR_NAME + localTime;
+        String strLocalDate = LocalDateTime.now().format(formatter);
+
+        LocalDateTime localDate = LocalDateTime.parse(strLocalDate, formatter);
+
+        String token =  new RandomString(10)+DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").format(localDate);
 
 
         try {
@@ -72,10 +75,8 @@ public class ForgotPasswordController {
         MimeMessage message = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        int time = LocalTime.now().getMinute();
         helper.setFrom("TMIS@gmail.com", "Customer Support");
         helper.setTo(recipientEmail);
-
         String subject = "Here's the link to reset your password";
 
         String content = "<p style='color:gray;font-size:20px;'>Hello Dear User,</p>"
@@ -103,7 +104,7 @@ public class ForgotPasswordController {
         String token = request.getParameter("token");
         String password = user.getPassword();
         User userServiceByResetPasswordToken = userService.getByResetPasswordToken(token);
-        userService.updatePassword(userServiceByResetPasswordToken, password);
+        userService.updatePassword(userServiceByResetPasswordToken,password);
 
     }
 
