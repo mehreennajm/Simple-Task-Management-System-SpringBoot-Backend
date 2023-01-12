@@ -45,6 +45,11 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getListOfOrdinaryUsers());
     }
 
+    @GetMapping({"/expire_token"})
+    public ResponseEntity<?> getDate(){
+        return ResponseEntity.ok().body(userService.getDate());
+    }
+
 
     @PostMapping(value = {"/users/add-user"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")

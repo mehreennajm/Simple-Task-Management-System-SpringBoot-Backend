@@ -7,11 +7,9 @@ import com.example.task_mis.entities.User;
 import com.example.task_mis.respositories.UserRepository;
 import com.example.task_mis.services.interfaces.UserService;
 import net.bytebuddy.utility.RandomString;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -55,6 +54,9 @@ public class UserServiceImp implements UserService {
         File image = new File("user-photos/"+ imageName);
         return Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(image.toPath()));
     }
+
+
+
     @Override
     public List<UserData> getListOfOrdinaryUsers(){
         List <UserData> managerDataList = new ArrayList <> ();
@@ -158,6 +160,7 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findByEmail(email);
         if (user != null) {
             user.setResetPasswordToken(token);
+            user.setTokenExpirationDate(LocalDateTime.now().plusSeconds(60));
             userRepository.save(user);
         } else {
             throw new UsernameNotFoundException("Could not find any user with the email " + email);
@@ -167,13 +170,14 @@ public class UserServiceImp implements UserService {
     public User getByResetPasswordToken(String token) {
         return userRepository.findByResetPasswordToken(token);
     }
+    public Optional<User> getByUserToken(String token ){ return  userRepository.getUserToken(token); }
 
     public void updatePassword(User user, String newPassword) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(newPassword);
 
         if(user == null){
-            ResponseEntity.status(500).body("Expired");
+            throw new IllegalStateException("User is null");
         }
         else  {
             user.setPassword(encodedPassword);
@@ -182,6 +186,15 @@ public class UserServiceImp implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public List<UserData> getDate() {
+        List <UserData> dates = new ArrayList <> ();
+        List <User> users = userRepository.findUserByExpireToken();
+        for (User user: users) {
+            dates.add(convertUserToDto(user));
+        }
+        return dates;
+    }
 
 
 }

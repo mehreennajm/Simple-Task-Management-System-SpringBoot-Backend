@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -57,6 +58,9 @@ public class User {
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
+
+    @Column(name = "token_expiration_date")
+    private LocalDateTime tokenExpirationDate;
 
 
     @JsonIgnore

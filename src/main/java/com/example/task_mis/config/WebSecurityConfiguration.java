@@ -46,6 +46,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
                 .antMatchers("/api/authenticate").permitAll()
                 .antMatchers("/api/forgot_password").permitAll()
                 .antMatchers("/api/reset_password").permitAll()
+                .antMatchers("/api/expire_token").permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()
                 .and()

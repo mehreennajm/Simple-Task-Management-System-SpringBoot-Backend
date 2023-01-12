@@ -18,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @RestController
@@ -32,29 +34,24 @@ public class ForgotPasswordController {
     @GetMapping({"/reset_password"})
     public User showResetPasswordForm(@Param(value = "token") String token) {
 
-        User user = userService.getByResetPasswordToken(token);
-
-        if(user == null){
-            throw new RuntimeException("Token is not valid or expired!");
+        User userResetToken = userService.getByResetPasswordToken(token);
+        Optional<User> userOptional = userService.getByUserToken(token);
+        if (userOptional.isPresent() && userOptional.get().getTokenExpirationDate().isAfter(LocalDateTime.now())) {
+            // process the request and update the expiration date
+            throw new RuntimeException("expired");
         }
+
         else {
-            user.setResetPasswordToken(token);
+            userResetToken.setResetPasswordToken(token);
         }
+        return userResetToken;
 
-        return user;
     }
 
     @PostMapping("/forgot_password")
     public void processForgotPassword(HttpServletRequest request,@RequestBody  User user) {
         String email = user.getEmail();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
-        String strLocalDate = LocalDateTime.now().format(formatter);
-
-        LocalDateTime localDate = LocalDateTime.parse(strLocalDate, formatter);
-
-        String token =  new RandomString(10)+DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").format(localDate);
-
+        String token =  UUID.randomUUID().toString();
 
         try {
             userService.updateResetPasswordToken(token, email);

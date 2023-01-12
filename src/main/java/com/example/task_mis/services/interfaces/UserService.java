@@ -2,10 +2,10 @@ package com.example.task_mis.services.interfaces;
 import com.example.task_mis.dto.UserData;
 import com.example.task_mis.entities.User;
 import com.example.task_mis.enums.UserRole;
-import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     List<UserData> getListOfUsers() throws IOException;
@@ -17,6 +17,7 @@ public interface UserService {
     void updateResetPasswordToken(String token, String email);
     User getByResetPasswordToken(String token);
     void updatePassword(User customer, String newPassword);
-
+    Optional<User> getByUserToken(String token);
     String getImage(String imageName) throws IOException;
+    List<UserData> getDate();
 }
